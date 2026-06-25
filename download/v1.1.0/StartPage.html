@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --glass:rgba(255,255,255,0.13);
+  --glass-b:rgba(255,255,255,0.22);
+  --glass-h:rgba(255,255,255,0.2);
+  --text:rgba(255,255,255,0.96);
+  --dim:rgba(255,255,255,0.55);
+  --accent:#60c8f5;
+  --danger:rgba(255,80,80,0.9);
+  --panel:rgba(255,255,255,0.09);
+  --panel-b:rgba(255,255,255,0.15);
+  --input-bg:rgba(255,255,255,0.1);
+  --r:12px;--rs:8px;
+}
+
+html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
+
+/* BG */
+#bg-img{
+  position:fixed;inset:0;z-index:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transition:opacity 1.2s ease
+}
+#bg-img2{
+  position:fixed;inset:0;z-index:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:0;transition:opacity 1.2s ease
+}
+.overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.15) 45%,rgba(0,0,0,0.38) 100%)
+}
+
+/* APP SHELL */
+#app{
+  position:relative;z-index:2;
+  height:100vh;display:flex;flex-direction:column;
+  overflow:hidden
+}
+
+/* ── TOP: CLOCK LEFT + BG BTN RIGHT ── */
+#top-row{
+  flex:0 0 auto;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:28px 36px 0;
+}
+
+/* BIG CLOCK */
+#clock-block{line-height:1;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
+#clock-time{
+  font-family:'Outfit',sans-serif;font-weight:200;
+  font-size:clamp(64px,7vw,96px);color:#fff;
+  letter-spacing:-2px;display:flex;align-items:baseline;gap:6px
+}
+#clock-ampm{font-size:clamp(22px,2.5vw,34px);font-weight:400;color:rgba(255,255,255,0.75);letter-spacing:0}
+#clock-date{
+  font-size:clamp(13px,1.3vw,16px);color:rgba(255,255,255,0.7);
+  margin-top:4px;font-weight:300;letter-spacing:0.5px
+}
+
+/* TOP-RIGHT CONTROLS */
+#top-right{display:flex;align-items:center;gap:8px;padding-top:6px}
+.icon-btn{
+  background:var(--glass);backdrop-filter:blur(10px);
+  border:1px solid var(--glass-b);color:var(--text);
+  width:36px;height:36px;border-radius:50%;font-size:15px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;text-decoration:none
+}
+.icon-btn:hover{background:var(--glass-h)}
+
+/* ── BOOKMARKS (FIXED CENTER, ICON GRID) ── */
+#bm-section{
+  flex:0 0 auto;
+  display:flex;flex-direction:column;align-items:center;
+  padding:22px 0 0;
+}
+#bm-wrap{width:80%;max-width:1000px}
+#bm-grid{
+  display:flex;flex-wrap:wrap;
+  justify-content:center;gap:10px 6px
+}
+
+.bm-card{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:82px;text-decoration:none;color:var(--text);
+  cursor:pointer;position:relative;
+}
+.bm-icon-wrap{
+  width:56px;height:56px;border-radius:14px;
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.28);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15)
+}
+.bm-card:hover .bm-icon-wrap{background:rgba(255,255,255,0.28);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.22)}
+.bm-icon-wrap img{width:30px;height:30px;border-radius:6px;object-fit:contain}
+.bm-icon-wrap .bm-letter{font-size:20px;font-weight:600;color:#fff}
+.bm-label{font-size:11px;color:rgba(255,255,255,0.8);text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:76px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.5)}
+.bm-del{
+  position:absolute;top:-4px;right:8px;
+  background:var(--danger);border:none;color:#fff;
+  width:16px;height:16px;border-radius:50%;font-size:9px;
+  cursor:pointer;display:none;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(0,0,0,0.3)
+}
+.bm-card:hover .bm-del{display:flex}
+
+/* ADD SITE CARD */
+.bm-add-card{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:82px;cursor:pointer;
+}
+.bm-add-icon{
+  width:56px;height:56px;border-radius:14px;
+  background:rgba(255,255,255,0.1);
+  border:1.5px dashed rgba(255,255,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:rgba(255,255,255,0.5);
+  transition:all 0.2s
+}
+.bm-add-card:hover .bm-add-icon{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.6);color:#fff}
+.bm-add-label{font-size:11px;color:rgba(255,255,255,0.5);text-shadow:0 1px 4px rgba(0,0,0,0.4)}
+
+/* ── SEARCH CENTER ── */
+#search-section{
+  flex:0 0 auto;
+  display:flex;justify-content:center;
+  padding:20px 0 0;
+}
+#search-bar{
+  width:80%;max-width:600px;
+  display:flex;align-items:center;
+  background:rgba(255,255,255,0.92);
+  border-radius:28px;padding:0 8px 0 22px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.18);
+  transition:all 0.2s
+}
+#search-bar:focus-within{background:#fff;box-shadow:0 6px 32px rgba(0,0,0,0.24)}
+.se-logo{font-size:18px;margin-right:10px;cursor:pointer;user-select:none;flex-shrink:0}
+#search-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:#222;font-size:15px;font-family:'Outfit',sans-serif;
+  padding:14px 0;
+}
+#search-input::placeholder{color:#999}
+#search-btn{
+  background:rgba(0,0,0,0.07);border:none;color:#555;
+  width:36px;height:36px;border-radius:50%;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;flex-shrink:0
+}
+#search-btn:hover{background:rgba(0,0,0,0.14);color:#222}
+#se-label{font-size:12px;color:#888;margin-right:6px;cursor:pointer;white-space:nowrap}
+
+/* ── COPYBOARD SECTION ── */
+#cb-section{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:18px 0 0;overflow:hidden
+}
+#cb-wrap{
+  width:70%;max-width:900px;
+  display:flex;flex-direction:column;gap:0;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:16px;
+  overflow:hidden
+}
+#cb-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px 8px;
+  border-bottom:1px solid rgba(255,255,255,0.1)
+}
+#cb-title{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--dim);font-weight:600}
+#cb-clear{background:transparent;border:none;color:var(--accent);font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif}
+#cb-clear:hover{opacity:0.7}
+#copyboard-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;
+  max-height:calc(100vh - 460px);
+  overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.15) transparent
+}
+#copyboard-grid::-webkit-scrollbar{width:4px}
+#copyboard-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:4px}
+
+.cb-row{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 10px 5px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  border-right:1px solid rgba(255,255,255,0.06);
+  transition:background 0.15s
+}
+.cb-row:nth-child(even){border-right:none}
+.cb-row:hover{background:rgba(255,255,255,0.05)}
+.cb-row:focus-within{background:rgba(96,200,245,0.07)}
+.cb-num{font-size:10px;color:rgba(255,255,255,0.28);font-family:'Space Mono',monospace;min-width:18px;text-align:right}
+.cb-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-size:12.5px;font-family:'Outfit',sans-serif;padding:5px 4px
+}
+.cb-input::placeholder{color:rgba(255,255,255,0.2)}
+.cb-copy{
+  background:transparent;border:1px solid rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.45);padding:3px 9px;border-radius:5px;
+  font-size:10px;cursor:pointer;transition:all 0.15s;white-space:nowrap
+}
+.cb-copy:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* ── BOTTOM TOOLBAR ── */
+#bottom-bar{
+  flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 0 12px;
+}
+.tool-btn{
+  background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);
+  padding:7px 15px;border-radius:50px;font-size:11.5px;
+  cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif;
+  display:flex;align-items:center;gap:5px
+}
+.tool-btn:hover{background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);
+  z-index:1000;align-items:center;justify-content:center
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:rgba(14,20,40,0.97);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:20px;padding:26px;
+  width:360px;max-width:92vw;
+  display:flex;flex-direction:column;gap:13px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.4)
+}
+.modal h3{color:var(--accent);font-size:15px;font-weight:600}
+.modal input,.modal select{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--text);padding:10px 13px;border-radius:var(--rs);
+  font-size:13.5px;outline:none;font-family:'Outfit',sans-serif;
+  transition:border-color 0.2s;width:100%
+}
+.modal input:focus{border-color:var(--accent)}
+.modal-btns{display:flex;gap:8px}
+.btn-p{flex:1;background:var(--accent);border:none;color:#0a0f1e;
+  padding:10px;border-radius:50px;font-weight:600;font-size:13px;
+  cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-p:hover{background:#fff}
+.btn-s{flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--text);padding:10px;border-radius:50px;font-size:13px;
+  cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-s:hover{border-color:rgba(255,255,255,0.4)}
+
+/* BG PICKER GRID */
+#bg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.bg-thumb{
+  border-radius:10px;overflow:hidden;cursor:pointer;
+  height:70px;background-size:cover;background-position:center;
+  border:2px solid transparent;transition:all 0.2s;position:relative
+}
+.bg-thumb:hover,.bg-thumb.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(96,200,245,0.3)}
+.bg-thumb span{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(0,0,0,0.55);color:#fff;font-size:10px;
+  padding:3px 6px;text-align:center
+}
+.bg-auto-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 0 0;border-top:1px solid rgba(255,255,255,0.1)
+}
+.bg-auto-label{font-size:12px;color:var(--dim)}
+.bg-interval-sel{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--text);padding:5px 10px;border-radius:var(--rs);
+  font-size:12px;font-family:'Outfit',sans-serif;cursor:pointer
+}
+
+/* VAULT */
+#vault-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);backdrop-filter:blur(18px);
+  z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:16px
+}
+#vault-overlay.active{display:flex}
+#vault-unlock-box{
+  background:rgba(14,20,40,0.99);border:1px solid var(--accent);
+  border-radius:20px;padding:30px;width:330px;
+  display:flex;flex-direction:column;gap:13px;
+  box-shadow:0 0 40px rgba(96,200,245,0.1)
+}
+#vault-unlock-box h3{color:var(--accent);font-size:15px;font-weight:600;text-align:center}
+#vault-pin-input{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--text);padding:12px;border-radius:var(--rs);
+  font-size:20px;text-align:center;letter-spacing:8px;outline:none;
+  font-family:'Space Mono',monospace;width:100%
+}
+#vault-pin-input:focus{border-color:var(--accent)}
+#vault-error{color:#ff6b6b;font-size:12px;text-align:center;display:none}
+#vault-hint{color:var(--dim);font-size:11px;text-align:center}
+
+#vault-content{
+  background:rgba(14,20,40,0.99);border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px;padding:22px;width:500px;max-width:92vw;
+  max-height:72vh;overflow-y:auto;
+  display:flex;flex-direction:column;gap:12px
+}
+.vault-hdr{display:flex;align-items:center;justify-content:space-between}
+.vault-hdr h3{color:var(--accent);font-size:15px}
+.v-close{background:transparent;border:none;color:var(--dim);font-size:20px;cursor:pointer}
+.pw-entry{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--rs);padding:10px 13px;
+  display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center
+}
+.pw-site{font-size:13px;font-weight:500;color:var(--text)}
+.pw-user{font-size:11px;color:var(--dim)}
+.pw-pass{font-size:12px;color:var(--text);font-family:'Space Mono',monospace;
+  background:rgba(255,255,255,0.07);padding:3px 8px;border-radius:4px;
+  filter:blur(4px);cursor:pointer;transition:filter 0.2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pw-pass.on{filter:none}
+.pw-actions{display:flex;gap:4px}
+.pw-btn{
+  background:transparent;border:1px solid rgba(255,255,255,0.12);
+  color:var(--dim);width:26px;height:26px;border-radius:5px;
+  font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s
+}
+.pw-btn:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+.pw-btn.d:hover{background:var(--danger);border-color:transparent}
+#add-pw-form{display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px}
+#add-pw-form h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+.v-input{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);
+  color:var(--text);padding:8px 11px;border-radius:var(--rs);
+  font-size:13px;outline:none;font-family:'Outfit',sans-serif;width:100%
+}
+.v-input:focus{border-color:var(--accent)}
+
+/* CODE CONSOLE */
+#code-console{
+  display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  background:rgba(8,12,26,0.97);border:1px solid rgba(255,255,255,0.15);
+  border-bottom:none;border-radius:12px 12px 0 0;
+  padding:10px 16px;z-index:3000;width:300px;backdrop-filter:blur(12px)
+}
+#code-console.active{display:flex;align-items:center;gap:8px}
+#code-console span{color:var(--accent);font-family:'Space Mono',monospace;font-size:13px}
+#code-input{flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Space Mono',monospace;font-size:13px}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:rgba(14,20,40,0.96);border:1px solid var(--accent);
+  color:var(--accent);padding:9px 22px;border-radius:50px;
+  font-size:13px;font-weight:500;z-index:9999;
+  transition:transform 0.3s cubic-bezier(.22,1,.36,1),opacity 0.3s;opacity:0;
+  backdrop-filter:blur(10px);white-space:nowrap
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* SE SELECTOR */
+.se-opts{display:flex;flex-wrap:wrap;gap:7px}
+.se-opt{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--dim);padding:5px 14px;border-radius:50px;font-size:12px;
+  cursor:pointer;transition:all 0.18s;font-family:'Outfit',sans-serif}
+.se-opt.active,.se-opt:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div id="bg-img"></div>
+<div id="bg-img2"></div>
+<div class="overlay"></div>
+
+<div id="app">
+
+  <!-- TOP ROW: BIG CLOCK + CONTROLS -->
+  <div id="top-row">
+    <div id="clock-block">
+      <div id="clock-time">10:14 <span id="clock-ampm">AM</span></div>
+      <div id="clock-date">Monday, January 1</div>
+    </div>
+    <div id="top-right">
+      <button class="icon-btn" title="Change wallpaper" onclick="openModal('bg')">🖼</button>
+      <button class="icon-btn" title="Export data" onclick="exportCache()">⬇</button>
+      <button class="icon-btn" title="Import data" onclick="document.getElementById('import-file').click()">⬆</button>
+      <button class="icon-btn" title="Search engine" onclick="openModal('se')">🔍</button>
+      <button class="icon-btn" title="Set name" onclick="openModal('name')">👤</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importCache(event)">
+    </div>
+  </div>
+
+  <!-- BOOKMARKS ICON GRID -->
+  <div id="bm-section">
+    <div id="bm-wrap">
+      <div id="bm-grid"></div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="search-section">
+    <div id="search-bar">
+      <span class="se-logo" id="se-logo" onclick="openModal('se')" title="Change engine">🔍</span>
+      <input id="search-input" type="text" placeholder="Search the web or type a URL..."
+        autocomplete="off" onkeydown="if(event.key==='Enter')doSearch()">
+      <span id="se-label" onclick="openModal('se')"></span>
+      <button id="search-btn" onclick="doSearch()">↑</button>
+    </div>
+  </div>
+
+  <!-- COPYBOARD -->
+  <div id="cb-section">
+    <div id="cb-wrap">
+      <div id="cb-header">
+        <span id="cb-title">Copy Board</span>
+        <button id="cb-clear" onclick="clearAllCB()">Clear All</button>
+      </div>
+      <div id="copyboard-grid"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM TOOLBAR -->
+  <div id="bottom-bar">
+    <button class="tool-btn" onclick="openModal('bm')">＋ Add Bookmark</button>
+    <button class="tool-btn" onclick="openModal('bg')">🖼 Wallpaper</button>
+    <button class="tool-btn" onclick="exportCache()">⬇ Export</button>
+    <button class="tool-btn" onclick="document.getElementById('import-file').click()">⬆ Import</button>
+  </div>
+
+</div>
+
+<!-- ADD BOOKMARK MODAL -->
+<div class="modal-overlay" id="modal-bm">
+  <div class="modal">
+    <h3>Add Bookmark</h3>
+    <input type="text" id="bm-name-input" placeholder="Name (e.g. GitHub)">
+    <input type="text" id="bm-url-input" placeholder="URL (https://...)">
+    <div class="modal-btns">
+      <button class="btn-p" onclick="saveBookmark()">Save</button>
+      <button class="btn-s" onclick="closeModal('bm')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div class="modal-overlay" id="modal-name">
+  <div class="modal">
+    <h3>Your Name</h3>
+    <input type="text" id="name-input" placeholder="Enter your name..." maxlength="20">
+    <div class="modal-btns">
+      <button class="btn-p" onclick="saveName()">Save</button>
+      <button class="btn-s" onclick="closeModal('name')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH ENGINE MODAL -->
+<div class="modal-overlay" id="modal-se">
+  <div class="modal">
+    <h3>Search Engine</h3>
+    <div class="se-opts">
+      <button class="se-opt" data-engine="google" data-logo="🇬" onclick="selectSE(this)">Google</button>
+      <button class="se-opt" data-engine="bing" data-logo="Ⓑ" onclick="selectSE(this)">Bing</button>
+      <button class="se-opt" data-engine="duckduckgo" data-logo="🦆" onclick="selectSE(this)">DuckDuckGo</button>
+      <button class="se-opt" data-engine="brave" data-logo="🦁" onclick="selectSE(this)">Brave</button>
+    </div>
+    <button class="btn-p" onclick="closeModal('se')">Done</button>
+  </div>
+</div>
+
+<!-- BG MODAL -->
+<div class="modal-overlay" id="modal-bg">
+  <div class="modal" style="width:400px">
+    <h3>Wallpaper</h3>
+    <div id="bg-grid">
+      <div class="bg-thumb" data-cat="nature" onclick="setBgCat('nature',this)" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&q=60')"><span>Nature</span></div>
+      <div class="bg-thumb" data-cat="city" onclick="setBgCat('city',this)" style="background-image:url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=300&q=60')"><span>City</span></div>
+      <div class="bg-thumb" data-cat="space" onclick="setBgCat('space',this)" style="background-image:url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300&q=60')"><span>Space</span></div>
+      <div class="bg-thumb" data-cat="abstract" onclick="setBgCat('abstract',this)" style="background-image:url('https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=300&q=60')"><span>Abstract</span></div>
+      <div class="bg-thumb" data-cat="mountain" onclick="setBgCat('mountain',this)" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=300&q=60')"><span>Mountain</span></div>
+      <div class="bg-thumb" data-cat="ocean" onclick="setBgCat('ocean',this)" style="background-image:url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=300&q=60')"><span>Ocean</span></div>
+    </div>
+    <div class="bg-auto-row">
+      <span class="bg-auto-label">Auto-change every</span>
+      <select class="bg-interval-sel" id="bg-interval-sel" onchange="setBgInterval(this.value)">
+        <option value="0">Off</option>
+        <option value="30">30 sec</option>
+        <option value="60" selected>1 min</option>
+        <option value="300">5 min</option>
+        <option value="600">10 min</option>
+        <option value="1800">30 min</option>
+      </select>
+    </div>
+    <button class="btn-s" onclick="closeModal('bg')">Close</button>
+  </div>
+</div>
+
+<!-- VAULT OVERLAY -->
+<div id="vault-overlay">
+  <div id="vault-unlock-box">
+    <h3>🔐 Secure Vault</h3>
+    <p style="color:var(--dim);font-size:12px;text-align:center">Enter your vault PIN</p>
+    <input type="password" id="vault-pin-input" placeholder="••••" maxlength="8"
+      onkeydown="if(event.key==='Enter')unlockVault()"
+      oninput="document.getElementById('vault-error').style.display='none'">
+    <div id="vault-error">Incorrect PIN. Try again.</div>
+    <div id="vault-hint">Default PIN: <code style="color:var(--accent)">1234</code></div>
+    <div class="modal-btns">
+      <button class="btn-p" onclick="unlockVault()">Unlock</button>
+      <button class="btn-s" onclick="closeVault()">Cancel</button>
+    </div>
+  </div>
+  <div id="vault-content" style="display:none">
+    <div class="vault-hdr">
+      <h3>🔐 Password Vault</h3>
+      <button class="v-close" onclick="closeVault()">✕</button>
+    </div>
+    <div id="vault-entries"></div>
+    <div id="add-pw-form">
+      <h4>Add New Entry</h4>
+      <input class="v-input" type="text" id="pw-site" placeholder="Site / App">
+      <input class="v-input" type="text" id="pw-user" placeholder="Username / Email">
+      <input class="v-input" type="password" id="pw-pass" placeholder="Password">
+      <input class="v-input" type="text" id="pw-notes" placeholder="Notes (optional)">
+      <div style="display:flex;gap:8px">
+        <button class="btn-p" style="flex:1" onclick="savePwEntry()">Save Entry</button>
+        <button class="btn-s" style="font-size:12px;white-space:nowrap" onclick="changePIN()">Change PIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE CONSOLE -->
+<div id="code-console">
+  <span>>_</span>
+  <input type="password" id="code-input" placeholder="code..." autocomplete="off"
+    onkeydown="handleCodeInput(event)">
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════
+// WALLPAPER ENGINE — Unsplash rotating
+// ══════════════════════════════════
+const UNSPLASH_CATS = {
+  nature:   ['photo-1506905925346-21bda4d32df4','photo-1448375240586-882707db888b','photo-1501854140801-50d01698950b'],
+  city:     ['photo-1477959858617-67f85cf4f1df','photo-1480714378408-67cf0d13bc1b','photo-1486325212027-8081e485255e'],
+  space:    ['photo-1462331940025-496dfbfc7564','photo-1419242902214-272b3f66ee7a','photo-1444703686981-a3abbc4d4fe3'],
+  abstract: ['photo-1541701494587-cb58502866ab','photo-1558618666-fcd25c85cd64','photo-1557672172-298e090bd0f1'],
+  mountain: ['photo-1464822759023-fed622ff2c3b','photo-1506197603052-3cc9c3a201bd','photo-1519681393784-d120267933ba'],
+  ocean:    ['photo-1505118380757-91f5f5632de0','photo-1507525428034-b723cf961d3e','photo-1471922694854-ff1b63b20054'],
+};
+const BASE = 'https://images.unsplash.com/';
+
+let bgCat = localStorage.getItem('bg_cat') || 'nature';
+let bgIdx = 0;
+let bgSlot = 0; // 0=bg-img, 1=bg-img2
+let bgTimer;
+let bgIntervalSec = parseInt(localStorage.getItem('bg_interval') || '60');
+
+function getImgUrl(id) {
+  return `${BASE}${id}?w=1920&q=85&fit=crop`;
+}
+
+function loadBg(url, onDone) {
+  const img = new Image();
+  img.onload = () => { if(onDone) onDone(); };
+  img.src = url;
+}
+
+function showBg(url) {
+  const el1 = document.getElementById('bg-img');
+  const el2 = document.getElementById('bg-img2');
+  if (bgSlot === 0) {
+    loadBg(url, () => {
+      el1.style.backgroundImage = `url('${url}')`;
+      el1.style.opacity = '1';
+      el2.style.opacity = '0';
+      bgSlot = 1;
+    });
+  } else {
+    loadBg(url, () => {
+      el2.style.backgroundImage = `url('${url}')`;
+      el2.style.opacity = '1';
+      el1.style.opacity = '0';
+      bgSlot = 0;
+    });
+  }
+}
+
+function nextBg() {
+  const ids = UNSPLASH_CATS[bgCat] || UNSPLASH_CATS.nature;
+  bgIdx = (bgIdx + 1) % ids.length;
+  showBg(getImgUrl(ids[bgIdx]));
+}
+
+function setBgCat(cat, el) {
+  bgCat = cat;
+  bgIdx = 0;
+  localStorage.setItem('bg_cat', cat);
+  showBg(getImgUrl(UNSPLASH_CATS[cat][0]));
+  document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  resetBgTimer();
+}
+
+function setBgInterval(v) {
+  bgIntervalSec = parseInt(v);
+  localStorage.setItem('bg_interval', v);
+  resetBgTimer();
+}
+
+function resetBgTimer() {
+  clearInterval(bgTimer);
+  if (bgIntervalSec > 0) bgTimer = setInterval(nextBg, bgIntervalSec * 1000);
+}
+
+function initBg() {
+  const ids = UNSPLASH_CATS[bgCat] || UNSPLASH_CATS.nature;
+  showBg(getImgUrl(ids[0]));
+  // Mark active thumb
+  document.querySelectorAll('.bg-thumb').forEach(t => {
+    if (t.dataset.cat === bgCat) t.classList.add('active');
+  });
+  // Set interval selector
+  const sel = document.getElementById('bg-interval-sel');
+  if (sel) sel.value = String(bgIntervalSec);
+  resetBgTimer();
+}
+
+// ══════════════════════════════════
+// CLOCK
+// ══════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  document.getElementById('clock-time').innerHTML = `${h}:${m} <span id="clock-ampm" style="font-size:clamp(22px,2.5vw,34px);font-weight:400;color:rgba(255,255,255,0.7)">${ampm}</span>`;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('clock-date').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════════
+// SEARCH
+// ══════════════════════════════════
+const SE = {
+  google:    {url:'https://www.google.com/search?q=',logo:'🔍',label:'Google'},
+  bing:      {url:'https://www.bing.com/search?q=',logo:'🅱',label:'Bing'},
+  duckduckgo:{url:'https://duckduckgo.com/?q=',logo:'🦆',label:'DDG'},
+  brave:     {url:'https://search.brave.com/search?q=',logo:'🦁',label:'Brave'},
+};
+let currentSE = localStorage.getItem('se') || 'google';
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  const isUrl = /^https?:\/\//i.test(q) || /^[\w-]+\.[\w.-]+/i.test(q);
+  window.open(isUrl ? (q.startsWith('http') ? q : 'https://'+q) : SE[currentSE].url + encodeURIComponent(q), '_blank');
+}
+
+function selectSE(el) {
+  currentSE = el.dataset.engine;
+  localStorage.setItem('se', currentSE);
+  document.getElementById('se-logo').textContent = SE[currentSE].logo;
+  document.getElementById('se-label').textContent = SE[currentSE].label;
+  document.querySelectorAll('.se-opt').forEach(b => b.classList.toggle('active', b.dataset.engine === currentSE));
+}
+
+function initSE() {
+  document.getElementById('se-logo').textContent = SE[currentSE].logo;
+  document.getElementById('se-label').textContent = SE[currentSE].label;
+  document.querySelectorAll('.se-opt').forEach(b => b.classList.toggle('active', b.dataset.engine === currentSE));
+}
+
+// ══════════════════════════════════
+// COPYBOARD
+// ══════════════════════════════════
+function initCopyboard() {
+  const grid = document.getElementById('copyboard-grid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 20; i++) {
+    const saved = (localStorage.getItem(`cb_${i}`) || '').replace(/"/g,'&quot;');
+    const row = document.createElement('div');
+    row.className = 'cb-row';
+    row.innerHTML = `<span class="cb-num">${i}</span>
+      <input class="cb-input" type="text" id="cb-${i}" value="${saved}"
+        placeholder="Snippet ${i}…" oninput="saveCB(${i})">
+      <button class="cb-copy" onclick="copyCB(${i})">Copy</button>`;
+    grid.appendChild(row);
+  }
+}
+function saveCB(i) { localStorage.setItem(`cb_${i}`, document.getElementById(`cb-${i}`).value); }
+async function copyCB(i) {
+  const v = document.getElementById(`cb-${i}`).value;
+  if (!v.trim()) return;
+  try { await navigator.clipboard.writeText(v); showToast('Copied!'); }
+  catch(e) { showToast('Copy failed'); }
+}
+function clearAllCB() {
+  if (!confirm('Clear all copyboard slots?')) return;
+  for (let i=1;i<=20;i++){localStorage.removeItem(`cb_${i}`);const el=document.getElementById(`cb-${i}`);if(el)el.value='';}
+}
+
+// ══════════════════════════════════
+// BOOKMARKS
+// ══════════════════════════════════
+function getFavicon(url) {
+  try { return `https://www.google.com/s2/favicons?domain=${new URL(url.startsWith('http')?url:'https://'+url).hostname}&sz=64`; }
+  catch(e){ return ''; }
+}
+function getBookmarks(){ return JSON.parse(localStorage.getItem('bookmarks')||'[]'); }
+function saveBookmarks(b){ localStorage.setItem('bookmarks',JSON.stringify(b)); }
+
+function saveBookmark() {
+  const name = document.getElementById('bm-name-input').value.trim();
+  const url = document.getElementById('bm-url-input').value.trim();
+  if (!name||!url){ alert('Fill both fields'); return; }
+  const bms = getBookmarks();
+  bms.push({name,url});
+  saveBookmarks(bms);
+  document.getElementById('bm-name-input').value='';
+  document.getElementById('bm-url-input').value='';
+  closeModal('bm');
+  renderBookmarks();
+}
+
+function deleteBookmark(idx) {
+  const bms = getBookmarks(); bms.splice(idx,1); saveBookmarks(bms); renderBookmarks();
+}
+
+function renderBookmarks() {
+  const grid = document.getElementById('bm-grid');
+  const bms = getBookmarks();
+  grid.innerHTML = '';
+  bms.forEach((bm, i) => {
+    const a = document.createElement('a');
+    a.className = 'bm-card';
+    a.href = bm.url.startsWith('http') ? bm.url : 'https://'+bm.url;
+    a.target = '_blank'; a.rel = 'noopener';
+    const fav = getFavicon(bm.url);
+    a.innerHTML = `
+      <button class="bm-del" onclick="event.preventDefault();deleteBookmark(${i})">✕</button>
+      <div class="bm-icon-wrap">
+        ${fav ? `<img src="${fav}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" loading="lazy">
+        <span class="bm-letter" style="display:none">${bm.name[0].toUpperCase()}</span>` :
+        `<span class="bm-letter">${bm.name[0].toUpperCase()}</span>`}
+      </div>
+      <div class="bm-label">${bm.name}</div>
+    `;
+    grid.appendChild(a);
+  });
+  // Add "Add site" card
+  const addCard = document.createElement('div');
+  addCard.className = 'bm-add-card';
+  addCard.onclick = () => openModal('bm');
+  addCard.innerHTML = `<div class="bm-add-icon">＋</div><div class="bm-add-label">Add site</div>`;
+  grid.appendChild(addCard);
+}
+
+// ══════════════════════════════════
+// MODAL
+// ══════════════════════════════════
+function openModal(id){ document.getElementById(`modal-${id}`).classList.add('active'); }
+function closeModal(id){ document.getElementById(`modal-${id}`).classList.remove('active'); }
+document.addEventListener('click', e => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
+function saveName(){
+  const n=document.getElementById('name-input').value.trim();
+  if(n){ localStorage.setItem('user_name',n); showToast(`Hi, ${n}!`); }
+  closeModal('name');
+}
+
+// ══════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════
+function exportCache() {
+  const data={};
+  for(let k in localStorage){ if(localStorage.hasOwnProperty(k)) data[k]=localStorage.getItem(k); }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download=`startpage-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  showToast('Exported!');
+}
+function importCache(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(confirm(`Import ${Object.keys(data).length} items? Overwrites current data.`)){
+        Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));
+        showToast('Imported! Reloading…');
+        setTimeout(()=>location.reload(),1200);
+      }
+    }catch(err){alert('Invalid file');}
+  };
+  r.readAsText(file);
+  e.target.value='';
+}
+
+// ══════════════════════════════════
+// VAULT
+// ══════════════════════════════════
+let vaultUnlocked=false, vaultAttempts=0;
+function openVault(){
+  document.getElementById('vault-overlay').classList.add('active');
+  document.getElementById('vault-unlock-box').style.display='flex';
+  document.getElementById('vault-content').style.display='none';
+  document.getElementById('vault-pin-input').value='';
+  document.getElementById('vault-error').style.display='none';
+  setTimeout(()=>document.getElementById('vault-pin-input').focus(),100);
+}
+function closeVault(){
+  document.getElementById('vault-overlay').classList.remove('active');
+  vaultUnlocked=false;
+}
+function unlockVault(){
+  const pin=document.getElementById('vault-pin-input').value;
+  const stored=localStorage.getItem('vault_pin')||'1234';
+  if(pin===stored){
+    vaultUnlocked=true; vaultAttempts=0;
+    document.getElementById('vault-unlock-box').style.display='none';
+    document.getElementById('vault-content').style.display='flex';
+    renderVaultEntries();
+  } else {
+    vaultAttempts++;
+    document.getElementById('vault-error').textContent=`Incorrect PIN.${vaultAttempts>=3?' Hint: default is 1234':''}`;
+    document.getElementById('vault-error').style.display='block';
+    document.getElementById('vault-pin-input').value='';
+  }
+}
+function getVaultEntries(){ try{return JSON.parse(localStorage.getItem('vault_entries')||'[]');}catch(e){return [];} }
+function renderVaultEntries(){
+  const entries=getVaultEntries();
+  const c=document.getElementById('vault-entries');
+  c.innerHTML='';
+  if(!entries.length){ c.innerHTML='<div style="color:var(--dim);font-size:13px">No entries yet.</div>'; return; }
+  entries.forEach((e,i)=>{
+    const row=document.createElement('div'); row.className='pw-entry';
+    row.innerHTML=`<div><div class="pw-site">${e.site}</div><div class="pw-user">${e.user||''}</div></div>
+      <div><div class="pw-pass" id="pp-${i}" onclick="this.classList.toggle('on')">${e.pass}</div></div>
+      <div class="pw-actions">
+        <button class="pw-btn" onclick="cpPW(${i})">📋</button>
+        <button class="pw-btn d" onclick="delPW(${i})">✕</button>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+async function cpPW(i){ const e=getVaultEntries(); try{await navigator.clipboard.writeText(e[i].pass);showToast('Password copied!');}catch(err){showToast('Copy failed');} }
+function delPW(i){ if(!confirm('Delete?')) return; const e=getVaultEntries(); e.splice(i,1); localStorage.setItem('vault_entries',JSON.stringify(e)); renderVaultEntries(); }
+function savePwEntry(){
+  const site=document.getElementById('pw-site').value.trim();
+  const pass=document.getElementById('pw-pass').value.trim();
+  if(!site||!pass){alert('Site and password required');return;}
+  const e=getVaultEntries();
+  e.push({site,user:document.getElementById('pw-user').value.trim(),pass,notes:document.getElementById('pw-notes').value.trim()});
+  localStorage.setItem('vault_entries',JSON.stringify(e));
+  ['pw-site','pw-user','pw-pass','pw-notes'].forEach(id=>document.getElementById(id).value='');
+  renderVaultEntries(); showToast('Entry saved!');
+}
+function changePIN(){
+  const p=prompt('New PIN (numbers only):');
+  if(!p||!/^\d{4,}$/.test(p)){alert('PIN must be 4+ digits');return;}
+  localStorage.setItem('vault_pin',p); showToast('PIN updated!');
+}
+
+// ══════════════════════════════════
+// SECRET CONSOLE
+// ══════════════════════════════════
+let kbuf='', kTimer;
+document.addEventListener('keydown', e=>{
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  kbuf += e.key.toLowerCase();
+  clearTimeout(kTimer);
+  kTimer = setTimeout(()=>kbuf='', 1500);
+  if(kbuf.endsWith('vault')){ kbuf=''; toggleConsole(); }
+  if(kbuf.endsWith('export')){ kbuf=''; exportCache(); }
+  if(kbuf.endsWith('next')){ kbuf=''; nextBg(); }
+});
+
+function toggleConsole(){
+  const c=document.getElementById('code-console');
+  c.classList.toggle('active');
+  if(c.classList.contains('active')){ document.getElementById('code-input').value=''; document.getElementById('code-input').focus(); }
+}
+function handleCodeInput(e){
+  if(e.key==='Escape'){ document.getElementById('code-console').classList.remove('active'); return; }
+  if(e.key!=='Enter') return;
+  const val=document.getElementById('code-input').value.trim();
+  document.getElementById('code-console').classList.remove('active');
+  document.getElementById('code-input').value='';
+  const stored=localStorage.getItem('vault_pin')||'1234';
+  if(val===stored){
+    document.getElementById('vault-overlay').classList.add('active');
+    document.getElementById('vault-unlock-box').style.display='none';
+    document.getElementById('vault-content').style.display='flex';
+    vaultUnlocked=true; renderVaultEntries();
+  } else if(val.startsWith('bg:')){
+    const s=val.slice(3).trim(); setBgCat(s,null); showToast('Wallpaper: '+s);
+  } else if(val.startsWith('name:')){
+    const n=val.slice(5).trim(); if(n){localStorage.setItem('user_name',n);showToast('Name: '+n);}
+  } else if(val==='next'){ nextBg(); showToast('Next wallpaper');
+  } else if(val==='clear'){ if(confirm('Clear ALL data?')){localStorage.clear();location.reload();}
+  } else { showToast('Unknown command'); }
+}
+
+// ══════════════════════════════════
+// TOAST
+// ══════════════════════════════════
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+window.onload = () => {
+  initSE();
+  initCopyboard();
+  renderBookmarks();
+  initBg();
+  document.getElementById('name-input').value = localStorage.getItem('user_name') || '';
+  console.log('%c🔐 Type "vault" (not in an input) → code console appears → enter PIN to open vault', 'color:#60c8f5;font-size:13px');
+  console.log('%c⌨ Also: type "next" to cycle wallpaper, "export" to download backup', 'color:#a78bfa;font-size:12px');
+};
+</script>
+</body>
+</html>
