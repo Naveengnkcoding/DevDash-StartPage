@@ -24,14 +24,26 @@ A lightweight, browser Startpage designed for developers. It runs entirely from 
 
 ### 🚀 Release version 2 (Latest Version)
 *   **Added:** Added Cloud image wallpapers with 6 catergories - (Nature/City/Ocean/Space/Abstract/Mountain) and updated UI .
-*   🔗 **[Download DevStart v2.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/ad49544499cbbb0cfbb64ff27fdbc4a68d282065/download/v1.1.0/StartPage.html)**
+*   🔗 **[Download DevStart v2.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/download/v1.1.0/StartPage.html)**
 ### 🌟 Version 2 (Latest)
+<th><p align="center">
+           <a href=""><img src="img/v2.png" alt="Overview" width="60%" height="60%"></a>
+           <br>
+        </p>
+</th>
+
 ![DevStart v2 Preview](img/v2.png)
 
 ### 📁 Release version 1 (Initial Release)
 *   **Features:** Multi serch engine () | Quick bookmarks, JSON backup, and multi-slot clipboard | html-csswallpaper-darktheme.
-*   🔗 **[Download DevStart v1.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/ad49544499cbbb0cfbb64ff27fdbc4a68d282065/download/v1.0.0/startpage.html)**
+*   🔗 **[Download DevStart v1.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/download/v1.0.0/startpage.html)**
 ### 📁 Version 1
+<th><p align="center">
+           <a href=""><img src="img/v1.png" alt="Overview" width="60%" height="60%"></a>
+           <br>
+        </p>
+</th>
+
 ![DevStart v1 Preview](img/v1.png)
 
 ---
