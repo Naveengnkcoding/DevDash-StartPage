@@ -43,7 +43,7 @@ A lightweight, browser Startpage designed for developers. It runs entirely from 
 *   **Features:** Multi serch engine () | Quick bookmarks, JSON backup, and multi-slot clipboard | html-csswallpaper-darktheme.
 *   🔗 **[Download DevStart v1.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/download/v1.0.0/startpage.html)**
 
-<a href="https://githubusercontent.com" download>
+<a href="https://githubusercontent.com/Naveengnkcoding/Browser-StartPage/download/v1.0.0/startpage.html" download>
   <img src="https://shields.io" alt="Download File">
 </a>
 
