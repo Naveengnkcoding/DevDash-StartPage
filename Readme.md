@@ -37,11 +37,11 @@ We believe great tools should be free, open, and shaped by the community. **Cont
 
 ---
 
-### 🔥 Alpha 2 — Latest Release (Recommended)
+### 🔥 Beta 1 — Latest Release (Recommended)
 
 > **Status:** Alpha Series · Offline · Local File · Configurable
 
-**What's New in Alpha 2:**
+**What's New in Beta 1:**
 - **JARVIS with Voice** — Smart welcome speech and personalized daily briefing
 - **Project Management** — Active project tracking with completion stats
 - **Multi-Section Bookmarks** — Organize links by category (Dev, Design, Docs, Tools, etc.)
@@ -49,7 +49,7 @@ We believe great tools should be free, open, and shaped by the community. **Cont
 - **One-Click Open All** — Open every link in a section with a single click
 - **Enhanced Widget System** — Modular, draggable-ready layout
 
-🔗 **[Download DevDash Alpha 2 (HTML)](https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/DevDash-v2.html)**
+🔗 **[Download DevDash Beta 1 (HTML)](https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/DevDash-v2.html)**
 
 
 ### 🚀 Release Beta
@@ -58,6 +58,8 @@ We believe great tools should be free, open, and shaped by the community. **Cont
 <a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/DevDash-v2.html" download>
   ⬇️ Download Beta V1
 </a>
+
+### No preview available, download it!
 ---
 
 ---
@@ -72,7 +74,7 @@ We believe great tools should be free, open, and shaped by the community. **Cont
 
 ---
 
-<!-- ### 🚀 Release Version 1
+<!-- ### 🚀 Release Version 2
 
 *   **Added:** Cloud image wallpapers with 6 categories — (Nature / City / Ocean / Space / Abstract / Mountain) + updated UI.
 *   🔗 **[Download DevDash v2.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/main/download/alpha/StartPage-v2.html)**
