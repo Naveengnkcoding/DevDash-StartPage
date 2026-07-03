@@ -29,6 +29,11 @@
 html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+#bg-photo{
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;
+  background-size:cover;background-position:center;display:none;
+  transition:opacity 1s ease
+}
 
 .overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
@@ -70,23 +75,47 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 
 #settings-menu{
   position:absolute;top:70px;right:24px;z-index:101;
-  background:rgba(10,15,35,0.95);border:1px solid var(--glass-border);
-  border-radius:var(--radius);padding:8px;min-width:180px;
-  backdrop-filter:blur(20px);box-shadow:var(--shadow);
-  opacity:0;transform:translateY(-10px) scale(0.95);
-  pointer-events:none;transition:all 0.25s cubic-bezier(.22,1,.36,1)
+  display:flex;flex-direction:column;align-items:flex-end;gap:12px;
+  background:transparent;border:none;padding:0;min-width:0;
+  box-shadow:none;backdrop-filter:none;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s cubic-bezier(.22,1,.36,1)
 }
 #settings-menu.show{
-  opacity:1;transform:translateY(0) scale(1);pointer-events:auto
+  opacity:1;pointer-events:auto
 }
 .settings-item{
-  display:flex;align-items:center;gap:10px;padding:10px 14px;
-  border-radius:var(--radius-sm);color:var(--text-dim);
-  font-size:13px;cursor:pointer;transition:all 0.2s;border:none;
-  background:transparent;width:100%;font-family:'Outfit',sans-serif
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  cursor:pointer;border:none;background:transparent;width:auto;
+  font-family:'Outfit',sans-serif;padding:0;
+  opacity:0;transform:translateY(-8px) scale(0.9);
+  transition:opacity 0.25s ease,transform 0.25s ease
 }
-.settings-item:hover{background:var(--glass-hover);color:var(--text)}
-.settings-item svg{width:16px;height:16px;fill:currentColor}
+#settings-menu.show .settings-item{opacity:1;transform:translateY(0) scale(1)}
+#settings-menu.show .settings-item:nth-child(1){transition-delay:0.02s}
+#settings-menu.show .settings-item:nth-child(2){transition-delay:0.05s}
+#settings-menu.show .settings-item:nth-child(3){transition-delay:0.08s}
+#settings-menu.show .settings-item:nth-child(4){transition-delay:0.11s}
+#settings-menu.show .settings-item:nth-child(5){transition-delay:0.14s}
+#settings-menu.show .settings-item:nth-child(6){transition-delay:0.17s}
+.settings-label{
+  background:rgba(10,15,35,0.92);border:1px solid var(--glass-border);
+  color:var(--text-dim);font-size:12px;font-weight:500;
+  padding:8px 14px;border-radius:50px;white-space:nowrap;
+  backdrop-filter:blur(12px);transition:all 0.2s
+}
+.settings-item:hover .settings-label{color:var(--text);border-color:rgba(255,255,255,0.3)}
+.settings-icon-circle{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);transition:all 0.2s
+}
+.settings-item:hover .settings-icon-circle{
+  color:#fff;background:var(--accent);border-color:var(--accent);
+  box-shadow:0 0 18px var(--accent-glow)
+}
+.settings-item svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 
 /* STICKY TOP AREA */
 #sticky-top{
@@ -96,8 +125,9 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
   background:linear-gradient(180deg, rgba(5,8,20,0.7) 0%, rgba(5,8,20,0) 100%);
 }
 
-/* CATEGORY DROPDOWN */
-#cat-dropdown{position:relative;z-index:50}
+/* CATEGORY DROPDOWN (now sits below quicklinks, dim until hovered) */
+#cat-dropdown{position:relative;z-index:50;opacity:0.35;transition:opacity 0.25s ease}
+#cat-dropdown:hover,#cat-dropdown.show-menu{opacity:1}
 #cat-btn{
   background:var(--glass-bg);border:1px solid var(--glass-border);
   color:var(--accent2);padding:6px 16px;border-radius:50px;
@@ -129,9 +159,39 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
   color:var(--accent);font-weight:500
 }
 
+/* QUICK LINKS WRAP - two states only: "stay" (in flow) or "hide" (collapses to a bare expand tab, floated at top) */
+#ql-wrap{
+  width:100%;max-width:900px;position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.3s cubic-bezier(.22,1,.36,1)
+}
+#ql-toggle-btn{
+  position:absolute;top:-6px;right:-6px;z-index:5;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:11px;transition:all 0.2s;
+  opacity:0.3;backdrop-filter:blur(8px)
+}
+#ql-wrap:hover #ql-toggle-btn{opacity:1}
+#ql-toggle-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Hidden state: bar detaches, floats near the top, collapses to just the toggle tab */
+#ql-wrap.hidden-floated{
+  position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  width:auto;max-width:none;z-index:150
+}
+#ql-wrap.hidden-floated #ql-carousel{display:none}
+#ql-wrap.hidden-floated #ql-toggle-btn{
+  position:static;opacity:0.85;
+  background:rgba(8,12,26,0.6);backdrop-filter:blur(14px);
+  box-shadow:0 6px 20px rgba(0,0,0,0.3)
+}
+#ql-wrap.hidden-floated #ql-toggle-btn:hover{opacity:1}
+
 /* QUICK LINKS CAROUSEL */
 #ql-carousel{
-  width:100%;max-width:800px;position:relative;
+  width:100%;position:relative;
   display:flex;align-items:center;gap:10px;
 }
 .ql-arrow{
@@ -145,11 +205,12 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
   color:#fff;background:var(--accent);border-color:var(--accent);
   box-shadow:0 0 15px var(--accent-glow);transform:scale(1.1)
 }
+.ql-arrow[disabled]{opacity:0.25;cursor:default;pointer-events:none}
 
-#ql-container{flex:1;overflow:hidden;position:relative}
-#ql-track{display:flex;transition:transform 0.4s cubic-bezier(.22,1,.36,1)}
+#ql-container{flex:1;position:relative}
+#ql-track{display:flex}
 .ql-section{
-  min-width:100%;padding:0 4px;
+  width:100%;padding:0 4px;
   display:flex;flex-direction:column;align-items:center;gap:8px
 }
 .ql-section-title{
@@ -160,8 +221,10 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 .ql-section:hover .ql-section-title{opacity:1}
 .ql-grid{
   display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
-  width:100%
+  width:100%;max-height:220px;overflow-y:auto;padding:2px
 }
+.ql-grid::-webkit-scrollbar{width:4px}
+.ql-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:10px}
 .ql-card{
   background:var(--glass-bg);border:1px solid var(--glass-border);
   border-radius:14px;padding:10px 8px;width:64px;height:64px;
@@ -397,6 +460,115 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 .jarvis-card-actions button:hover{background:var(--glass-hover);color:var(--text)}
 .jarvis-card-actions button.danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 
+/* WIDGET PANEL */
+#widget-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px
+}
+.widget-card{
+  background:linear-gradient(135deg, rgba(255,255,255,0.11), rgba(255,255,255,0.03));
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:var(--radius);padding:20px;transition:all 0.25s;
+  position:relative;overflow:hidden;backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 28px rgba(0,0,0,0.25)
+}
+.widget-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:55%;
+  background:linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0));
+  pointer-events:none
+}
+.widget-card:hover{border-color:rgba(255,255,255,0.3);transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 14px 36px rgba(0,0,0,0.32)}
+.widget-card-icon{font-size:20px;margin-bottom:8px;opacity:0.85}
+.widget-card-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:2px;
+  color:var(--accent2);font-weight:600;opacity:0.8;margin-bottom:6px
+}
+.widget-card-main{font-size:16px;font-weight:600;color:var(--text);line-height:1.4}
+.widget-card-sub{font-size:12px;color:var(--text-dim);margin-top:6px;line-height:1.5}
+.widget-quote-text{font-size:14px;color:var(--text);font-style:italic;line-height:1.5}
+.widget-quote-author{font-size:11px;color:var(--accent2);margin-top:8px;text-align:right}
+.widget-stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--panel-border)}
+.widget-stat-row:last-child{border-bottom:none}
+.widget-stat-row b{color:var(--text);font-family:'Space Mono',monospace}
+
+.widget-remove-btn{
+  position:absolute;top:10px;right:10px;z-index:2;
+  background:rgba(255,90,90,0.15);border:1px solid rgba(255,90,90,0.3);
+  color:var(--danger);width:22px;height:22px;border-radius:50%;font-size:11px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  opacity:0;transition:opacity 0.2s
+}
+.widget-card:hover .widget-remove-btn{opacity:1}
+
+.widget-add-card{
+  border:1px dashed rgba(255,255,255,0.25);background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text-dim);cursor:pointer;min-height:150px;gap:6px;
+  backdrop-filter:none;box-shadow:none
+}
+.widget-add-card::before{display:none}
+.widget-add-card:hover{border-color:var(--accent);color:var(--accent)}
+.widget-add-card .plus{font-size:28px;font-weight:300;line-height:1}
+
+/* Todo widget */
+.wtodo-input-row{display:flex;gap:6px;margin-top:10px}
+.wtodo-input-row input{
+  flex:1;background:var(--input-bg);border:1px solid var(--panel-border);
+  color:var(--text);padding:7px 10px;border-radius:8px;font-size:12px;outline:none;
+  font-family:'Outfit',sans-serif
+}
+.wtodo-input-row button{
+  background:var(--accent);border:none;color:#fff;padding:7px 12px;
+  border-radius:8px;font-size:12px;cursor:pointer;font-weight:600
+}
+.wtodo-list{display:flex;flex-direction:column;gap:5px;margin-top:10px;max-height:150px;overflow-y:auto}
+.wtodo-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-dim)}
+.wtodo-item.done span{text-decoration:line-through;opacity:0.5}
+.wtodo-item input[type="checkbox"]{accent-color:var(--accent);cursor:pointer}
+.wtodo-item span{flex:1;color:var(--text)}
+.wtodo-item button{background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:12px;opacity:0;transition:opacity .15s}
+.wtodo-item:hover button{opacity:1}
+
+/* Weather widget */
+.wweather-temp{font-size:34px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;line-height:1}
+.wweather-loc{font-size:12px;color:var(--text-dim);margin-top:6px}
+.wweather-refresh{
+  margin-top:10px;background:var(--glass-bg);border:1px solid var(--glass-border);
+  color:var(--text-dim);padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer
+}
+.wweather-refresh:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Stocks widget */
+.wstock-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--panel-border)}
+.wstock-row:last-child{border-bottom:none}
+.wstock-row b{color:var(--text);font-family:'Space Mono',monospace}
+.wstock-row .up{color:#4ade80}
+.wstock-row .down{color:#ff6b6b}
+
+/* World clock widget */
+.wclock-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--text-dim)}
+.wclock-row b{color:var(--text);font-family:'Space Mono',monospace;font-size:14px}
+
+/* Focus timer widget */
+.wtimer-display{font-size:36px;font-weight:700;text-align:center;font-family:'Space Mono',monospace;color:var(--accent2);margin:10px 0}
+.wtimer-presets{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.wtimer-presets button{background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-dim);padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;transition:all 0.18s}
+.wtimer-presets button:hover,.wtimer-presets button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.wtimer-controls{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.wtimer-controls button{background:var(--panel);border:1px solid var(--panel-border);color:var(--text);padding:6px 14px;border-radius:20px;font-size:11px;cursor:pointer}
+.wtimer-controls button:hover{border-color:rgba(255,255,255,0.3)}
+
+/* Add Widget type picker */
+.aw-type-btn{
+  background:var(--panel);border:1px solid var(--panel-border);
+  color:var(--text);padding:14px 10px;border-radius:var(--radius-sm);
+  font-size:12px;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:6px
+}
+.aw-type-btn span.aw-ic{font-size:20px}
+.aw-type-btn:hover,.aw-type-btn.active{border-color:var(--accent);background:rgba(59,130,246,0.1);color:var(--accent2)}
+.aw-zone-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);padding:6px 0}
+.aw-zone-check input{accent-color:var(--accent)}
+
 /* MORE PANEL */
 #more-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px
@@ -552,6 +724,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 <body>
 
 <canvas id="bg-canvas"></canvas>
+<div id="bg-photo"></div>
 <div class="overlay"></div>
 
 <div id="app">
@@ -566,36 +739,48 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
   <button id="settings-btn" onclick="toggleSettings()">&#9881;</button>
   <div id="settings-menu">
     <button class="settings-item" onclick="openModal('name');toggleSettings()">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Change Name
+      <span class="settings-label">Change Name</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
     </button>
     <button class="settings-item" onclick="openModal('se');toggleSettings()">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Search Engine
+      <span class="settings-label">Search Engine</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
     </button>
     <button class="settings-item" onclick="openModal('bg');toggleSettings()">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      Wallpaper
+      <span class="settings-label">Wallpaper</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
     </button>
     <button class="settings-item" onclick="exportCache();toggleSettings()">
-      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export Data
+      <span class="settings-label">Export Data</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
     </button>
     <button class="settings-item" onclick="document.getElementById('import-file').click();toggleSettings()">
-      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Import Data
+      <span class="settings-label">Import Data</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
     </button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importCache(event)">
     <button class="settings-item" onclick="if(confirm('Clear ALL data?')){localStorage.clear();location.reload()}">
-      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      Clear All
+      <span class="settings-label">Clear All</span>
+      <span class="settings-icon-circle"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
     </button>
   </div>
 
   <!-- STICKY TOP -->
   <div id="sticky-top">
 
-    <!-- CATEGORY DROPDOWN -->
+    <!-- QUICK LINKS DOCK: "stay" (default, in-flow) or "hide" (floats above as a bare expand tab) -->
+    <div id="ql-wrap">
+      <button id="ql-toggle-btn" onclick="toggleQLVisibility()" title="Hide quicklinks">&#9652;</button>
+      <div id="ql-carousel">
+        <button class="ql-arrow" onclick="prevCategory()" title="Previous category">&#10094;</button>
+        <div id="ql-container">
+          <div id="ql-track"></div>
+        </div>
+        <button class="ql-arrow" onclick="nextCategory()" title="Next category">&#10095;</button>
+      </div>
+    </div>
+
+    <!-- CATEGORY DROPDOWN (below quicklinks, dim until hover) -->
     <div id="cat-dropdown">
       <button id="cat-btn" onclick="toggleCatMenu()">
         <span id="cat-label">HOME</span>
@@ -603,16 +788,6 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
       </button>
       <div id="cat-menu"></div>
     </div>
-
-    <!-- QUICK LINKS CAROUSEL -->
-    <div id="ql-carousel">
-      <button class="ql-arrow" onclick="prevQL()">&#10094;</button>
-      <div id="ql-container">
-        <div id="ql-track"></div>
-      </div>
-      <button class="ql-arrow" onclick="nextQL()">&#10095;</button>
-    </div>
-    <div class="ql-dots" id="ql-dots"></div>
 
     <!-- SEARCH BAR -->
     <div id="search-bar">
@@ -632,13 +807,14 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
 
     <!-- CONTENT TABS -->
     <div id="content-tabs">
-      <button class="ct-tab active" data-tab="copy" onclick="switchTab('copy')">COPY</button>
-      <button class="ct-tab" data-tab="jarvis" onclick="switchTab('jarvis')">JARVIS</button>
+      <button class="ct-tab" data-tab="copy" onclick="switchTab('copy')">COPY</button>
+      <button class="ct-tab" data-tab="widget" onclick="switchTab('widget')">WIDGET</button>
+      <button class="ct-tab active" data-tab="jarvis" onclick="switchTab('jarvis')">JARVIS</button>
       <button class="ct-tab" data-tab="more" onclick="switchTab('more')">MORE+</button>
     </div>
 
     <!-- COPY PANEL -->
-    <div class="content-panel active" id="panel-copy">
+    <div class="content-panel" id="panel-copy">
       <div class="section-header" style="margin-bottom:12px">
         <span class="section-title" style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);font-weight:600">Clipboard Slots</span>
         <button class="section-action" onclick="clearAllCB()">Clear All</button>
@@ -646,8 +822,44 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
       <div id="copyboard-grid"></div>
     </div>
 
+    <!-- WIDGET PANEL -->
+    <div class="content-panel" id="panel-widget">
+      <div class="section-header" style="margin-bottom:12px">
+        <span class="section-title" style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);font-weight:600">Widgets</span>
+      </div>
+      <div id="widget-grid">
+        <div class="widget-card">
+          <div class="widget-card-icon">&#128075;</div>
+          <div class="widget-card-label">Greeting</div>
+          <div class="widget-card-main" id="widget-greeting-main">Welcome back</div>
+          <div class="widget-card-sub" id="widget-greeting-sub">Loading...</div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-card-icon">&#10024;</div>
+          <div class="widget-card-label">Quote of the Day</div>
+          <div class="widget-quote-text" id="widget-quote-text">Loading quote...</div>
+          <div class="widget-quote-author" id="widget-quote-author"></div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-card-icon">&#127919;</div>
+          <div class="widget-card-label">Today's Focus</div>
+          <div class="widget-card-main" id="widget-focus-main">-</div>
+          <div class="widget-card-sub" id="widget-focus-sub"></div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-card-icon">&#128202;</div>
+          <div class="widget-card-label">Quick Stats</div>
+          <div id="widget-stats"></div>
+        </div>
+        <div class="widget-card widget-add-card" id="widget-add-card" onclick="openModal('addwidget')">
+          <div class="plus">+</div>
+          <div>Add Widget</div>
+        </div>
+      </div>
+    </div>
+
     <!-- JARVIS PANEL -->
-    <div class="content-panel" id="panel-jarvis">
+    <div class="content-panel active" id="panel-jarvis">
       <div class="section-header" style="margin-bottom:12px">
         <span class="section-title" style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);font-weight:600">Project Progress</span>
         <button class="section-action" onclick="openModal('project')">+ Add Project</button>
@@ -717,6 +929,25 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
   </div>
 </div>
 
+<!-- ADD WIDGET MODAL -->
+<div class="modal-overlay" id="modal-addwidget">
+  <div class="modal" style="width:440px">
+    <h3>Add Widget</h3>
+    <div id="aw-type-select" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button type="button" class="aw-type-btn" data-type="todo" onclick="selectWidgetType('todo')"><span class="aw-ic">&#9989;</span>To-Do</button>
+      <button type="button" class="aw-type-btn" data-type="weather" onclick="selectWidgetType('weather')"><span class="aw-ic">&#127780;</span>Weather</button>
+      <button type="button" class="aw-type-btn" data-type="stocks" onclick="selectWidgetType('stocks')"><span class="aw-ic">&#128200;</span>Stocks (India)</button>
+      <button type="button" class="aw-type-btn" data-type="worldclock" onclick="selectWidgetType('worldclock')"><span class="aw-ic">&#127760;</span>Global Time</button>
+      <button type="button" class="aw-type-btn" data-type="timer" onclick="selectWidgetType('timer')" style="grid-column:1/3"><span class="aw-ic">&#9201;</span>Focus Timer</button>
+    </div>
+    <div id="aw-config" style="display:none;flex-direction:column;gap:10px"></div>
+    <div class="modal-btns">
+      <button class="btn-primary" id="aw-save-btn" style="display:none" onclick="saveNewWidget()">Add Widget</button>
+      <button class="btn-secondary" onclick="closeModal('addwidget');resetAddWidgetModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAME MODAL -->
 <div class="modal-overlay" id="modal-name">
   <div class="modal">
@@ -756,6 +987,8 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif}
       <button class="btn-secondary" onclick="setBgStyle('nebula');closeModal('bg')">&#9729; Nebula</button>
       <button class="btn-secondary" onclick="setBgStyle('grid');closeModal('bg')">&#8862; Grid Flow</button>
       <button class="btn-secondary" onclick="setBgStyle('sunset');closeModal('bg')">&#127749; Sunset</button>
+      <button class="btn-secondary" onclick="setBgStyle('photo');closeModal('bg')">&#128247; Photo (Online)</button>
+      <button class="btn-secondary" onclick="setBgStyle('photo-cycle');closeModal('bg')">&#128260; Live Photo Cycle</button>
     </div>
     <button class="btn-secondary" style="margin-top:4px" onclick="closeModal('bg')">Cancel</button>
   </div>
@@ -999,14 +1232,57 @@ function animate() {
   animFrame = requestAnimationFrame(animate);
 }
 
+// ONLINE PHOTO WALLPAPER MODES (kept fully separate from the existing canvas styles above)
+let photoCycleTimer;
+function applyPhotoBg() {
+  const seed = Math.floor(Math.random() * 100000);
+  const photoLayer = document.getElementById('bg-photo');
+  photoLayer.style.opacity = '0';
+  const img = new Image();
+  img.onload = function() {
+    photoLayer.style.backgroundImage = `url('https://picsum.photos/seed/${seed}/1920/1080')`;
+    requestAnimationFrame(function() { photoLayer.style.opacity = '1'; });
+  };
+  img.src = `https://picsum.photos/seed/${seed}/1920/1080`;
+}
+function stopPhotoCycle() { clearInterval(photoCycleTimer); }
+function startPhotoCycle() {
+  stopPhotoCycle();
+  photoCycleTimer = setInterval(applyPhotoBg, 5 * 60 * 1000); // refresh every 5 minutes
+}
+
 function setBgStyle(s) {
   bgStyle = s;
   localStorage.setItem('bg_style', s);
   t = 0;
-  initParticles();
+
+  if (s === 'photo' || s === 'photo-cycle') {
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    document.getElementById('bg-canvas').style.display = 'none';
+    document.getElementById('bg-photo').style.display = 'block';
+    applyPhotoBg();
+    if (s === 'photo-cycle') startPhotoCycle(); else stopPhotoCycle();
+  } else {
+    stopPhotoCycle();
+    document.getElementById('bg-photo').style.display = 'none';
+    document.getElementById('bg-canvas').style.display = 'block';
+    initParticles();
+    if (!animFrame) animate();
+  }
 }
 
-animate();
+function initBg() {
+  if (bgStyle === 'photo' || bgStyle === 'photo-cycle') {
+    document.getElementById('bg-canvas').style.display = 'none';
+    document.getElementById('bg-photo').style.display = 'block';
+    applyPhotoBg();
+    if (bgStyle === 'photo-cycle') startPhotoCycle();
+  } else {
+    animate();
+  }
+}
+
+initBg();
 
 // CLOCK
 function updateClock() {
@@ -1019,6 +1295,7 @@ function updateClock() {
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('clock-date').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+  if (typeof updateAllWorldClocks === 'function') updateAllWorldClocks();
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -1033,25 +1310,510 @@ document.addEventListener('click', e => {
   }
 });
 
-// GREETING
-function updateGreeting() {
-  const name = localStorage.getItem('user_name') || 'User';
+// GREETING + WIDGETS
+const DAILY_QUOTES = [
+  { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
+  { q: "Simplicity is the soul of efficiency.", a: "Austin Freeman" },
+  { q: "Do the hard jobs first. The easy jobs will take care of themselves.", a: "Dale Carnegie" },
+  { q: "Focus on being productive instead of busy.", a: "Tim Ferriss" },
+  { q: "Small daily improvements are the key to staggering long-term results.", a: "Anonymous" },
+  { q: "Well begun is half done.", a: "Aristotle" },
+  { q: "You don't have to be great to start, but you have to start to be great.", a: "Zig Ziglar" },
+  { q: "Action is the foundational key to all success.", a: "Pablo Picasso" },
+  { q: "Discipline is choosing between what you want now and what you want most.", a: "Abraham Lincoln" },
+  { q: "The future depends on what you do today.", a: "Mahatma Gandhi" },
+  { q: "Either you run the day, or the day runs you.", a: "Jim Rohn" },
+  { q: "Progress, not perfection.", a: "Anonymous" },
+  { q: "Great things are done by a series of small things brought together.", a: "Vincent van Gogh" },
+  { q: "Stay focused, go after your dreams and keep moving toward your goals.", a: "LL Cool J" },
+  { q: "The way to get started is to quit talking and begin doing.", a: "Walt Disney" }
+];
+
+function getGreetingPhrase() {
+  const h = new Date().getHours();
+  if (h < 5) return 'Burning the midnight oil';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  if (h < 21) return 'Good evening';
+  return 'Good night';
 }
 
-// SPEECH
-function speakWelcome() {
+function getTimeString() {
+  const now = new Date();
+  const h24 = now.getHours();
+  const h = h24 % 12 || 12;
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const ampm = h24 >= 12 ? 'PM' : 'AM';
+  return `${h}:${m} ${ampm}`;
+}
+
+function updateGreeting() {
   const name = localStorage.getItem('user_name') || 'User';
   const projects = getProjects();
   const activeCount = projects.filter(p => p.status === 'active').length;
-  let msg = `Welcome back ${name}. `;
-  if (projects.length === 0) msg += 'No active projects. Ready to begin.';
-  else msg += `You have ${activeCount} active project${activeCount!==1?'s':''}. All systems operational.`;
-  const utter = new SpeechSynthesisUtterance(msg);
-  utter.rate = 0.95; utter.pitch = 1.0; utter.volume = 0.7;
+
+  const mainEl = document.getElementById('widget-greeting-main');
+  const subEl = document.getElementById('widget-greeting-sub');
+  if (mainEl) mainEl.textContent = `${getGreetingPhrase()}, ${name}`;
+  if (subEl) subEl.textContent = `It's ${getTimeString()}. ` + (activeCount > 0
+    ? `You have ${activeCount} active project${activeCount !== 1 ? 's' : ''}.`
+    : 'No active projects right now.');
+
+  renderWidgetQuote();
+  renderWidgetFocus();
+  renderWidgetStats();
+}
+
+function renderWidgetQuote() {
+  const textEl = document.getElementById('widget-quote-text');
+  const authorEl = document.getElementById('widget-quote-author');
+  if (!textEl) return;
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const pick = DAILY_QUOTES[dayOfYear % DAILY_QUOTES.length];
+  textEl.textContent = '\u201C' + pick.q + '\u201D';
+  authorEl.textContent = '\u2014 ' + pick.a;
+}
+
+function renderWidgetFocus() {
+  const mainEl = document.getElementById('widget-focus-main');
+  const subEl = document.getElementById('widget-focus-sub');
+  if (!mainEl) return;
+  const projects = getProjects().filter(p => p.status === 'active');
+  if (projects.length === 0) {
+    mainEl.textContent = 'All clear';
+    subEl.textContent = 'No active projects tracked today.';
+    return;
+  }
+  const top = projects[0];
+  mainEl.textContent = top.name;
+  subEl.textContent = `${top.pct || 0}% complete \u00B7 ${projects.length} active project${projects.length !== 1 ? 's' : ''} total`;
+}
+
+function renderWidgetStats() {
+  const el = document.getElementById('widget-stats');
+  if (!el) return;
+  const bmCount = getBookmarks().length;
+  const projCount = getProjects().length;
+  let cbCount = 0;
+  for (let i = 1; i <= 20; i++) if (localStorage.getItem('cb_' + i)) cbCount++;
+  el.innerHTML =
+    '<div class="widget-stat-row"><span>Quick links</span><b>' + bmCount + '</b></div>' +
+    '<div class="widget-stat-row"><span>Projects</span><b>' + projCount + '</b></div>' +
+    '<div class="widget-stat-row"><span>Clipboard slots used</span><b>' + cbCount + '/20</b></div>';
+}
+
+// =====================================================
+// CONFIGURABLE WIDGETS (Todo, Weather, Stocks, Global Time, Focus Timer)
+// Only appear once a user adds & configures them via the "+ Add Widget" card.
+// =====================================================
+const TIMEZONE_PRESETS = [
+  { key: 'America/New_York', label: 'New York' },
+  { key: 'America/Los_Angeles', label: 'Los Angeles' },
+  { key: 'Europe/London', label: 'London' },
+  { key: 'Asia/Shanghai', label: 'Beijing / Shanghai' },
+  { key: 'Asia/Tokyo', label: 'Tokyo' },
+  { key: 'Asia/Dubai', label: 'Dubai' },
+  { key: 'Asia/Kolkata', label: 'Mumbai / Delhi' },
+  { key: 'Australia/Sydney', label: 'Sydney' }
+];
+
+function getActiveWidgets() {
+  return JSON.parse(localStorage.getItem('active_widgets') || '[]');
+}
+function saveActiveWidgets(list) {
+  localStorage.setItem('active_widgets', JSON.stringify(list));
+}
+
+let awSelectedType = null;
+
+function selectWidgetType(type) {
+  awSelectedType = type;
+  document.querySelectorAll('.aw-type-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.type === type); });
+  const cfg = document.getElementById('aw-config');
+  cfg.style.display = 'flex';
+  document.getElementById('aw-save-btn').style.display = 'block';
+
+  if (type === 'todo') {
+    cfg.innerHTML = '<input type="text" id="aw-todo-title" placeholder="List title (e.g. Today\'s Tasks)" value="My Tasks">';
+  } else if (type === 'weather') {
+    cfg.innerHTML = '<input type="text" id="aw-city" placeholder="City name (e.g. Mumbai, London, Tokyo)">';
+  } else if (type === 'stocks') {
+    cfg.innerHTML = '<input type="text" id="aw-symbols" placeholder="NSE symbols, comma separated (e.g. TCS.NS, RELIANCE.NS, INFY.NS)">' +
+      '<div style="font-size:11px;color:var(--text-dim)">Tip: Indian NSE tickers end in .NS (e.g. TCS.NS)</div>';
+  } else if (type === 'worldclock') {
+    let html = '<div style="font-size:11px;color:var(--text-dim);margin-bottom:2px">Choose up to 4 cities</div>';
+    TIMEZONE_PRESETS.forEach(function(z) {
+      html += '<label class="aw-zone-check"><input type="checkbox" class="aw-zone-cb" value="' + z.key + '">' + z.label + '</label>';
+    });
+    cfg.innerHTML = html;
+  } else if (type === 'timer') {
+    cfg.innerHTML = '<div style="font-size:11px;color:var(--text-dim)">Starts with a 10 min / 45 min preset. You can start, pause, reset and set your own reminder time on the card itself.</div>';
+  }
+}
+
+function saveNewWidget() {
+  if (!awSelectedType) return;
+  const list = getActiveWidgets();
+  const id = 'w' + Date.now();
+
+  if (awSelectedType === 'todo') {
+    const title = (document.getElementById('aw-todo-title').value || 'My Tasks').trim();
+    list.push({ id: id, type: 'todo', title: title });
+  } else if (awSelectedType === 'weather') {
+    const city = document.getElementById('aw-city').value.trim();
+    if (!city) { alert('Enter a city name'); return; }
+    list.push({ id: id, type: 'weather', city: city });
+  } else if (awSelectedType === 'stocks') {
+    const raw = document.getElementById('aw-symbols').value.trim();
+    if (!raw) { alert('Enter at least one symbol'); return; }
+    const symbols = raw.split(',').map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean).slice(0, 6);
+    list.push({ id: id, type: 'stocks', symbols: symbols });
+  } else if (awSelectedType === 'worldclock') {
+    const zones = Array.from(document.querySelectorAll('.aw-zone-cb:checked')).map(function(c) { return c.value; }).slice(0, 4);
+    if (zones.length === 0) { alert('Select at least one city'); return; }
+    list.push({ id: id, type: 'worldclock', zones: zones });
+  } else if (awSelectedType === 'timer') {
+    list.push({ id: id, type: 'timer' });
+  }
+
+  saveActiveWidgets(list);
+  closeModal('addwidget');
+  resetAddWidgetModal();
+  renderActiveWidgets();
+  showToast('Widget added!');
+}
+
+function resetAddWidgetModal() {
+  awSelectedType = null;
+  document.querySelectorAll('.aw-type-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('aw-config').style.display = 'none';
+  document.getElementById('aw-config').innerHTML = '';
+  document.getElementById('aw-save-btn').style.display = 'none';
+}
+
+function removeWidget(id) {
+  if (!confirm('Remove this widget?')) return;
+  if (timerStates[id]) { clearInterval(timerStates[id].interval); delete timerStates[id]; }
+  localStorage.removeItem('todo_' + id);
+  const list = getActiveWidgets().filter(function(w) { return w.id !== id; });
+  saveActiveWidgets(list);
+  renderActiveWidgets();
+}
+
+function renderActiveWidgets() {
+  document.querySelectorAll('.dyn-widget-card').forEach(function(el) { el.remove(); });
+  const anchor = document.getElementById('widget-add-card');
+  getActiveWidgets().forEach(function(w) {
+    let card;
+    if (w.type === 'todo') card = buildTodoCard(w);
+    else if (w.type === 'weather') card = buildWeatherCard(w);
+    else if (w.type === 'stocks') card = buildStocksCard(w);
+    else if (w.type === 'worldclock') card = buildWorldClockCard(w);
+    else if (w.type === 'timer') card = buildTimerCard(w);
+    if (card) anchor.parentNode.insertBefore(card, anchor);
+  });
+}
+
+function makeWidgetShell(icon, label) {
+  const card = document.createElement('div');
+  card.className = 'widget-card dyn-widget-card';
+  card.innerHTML = '<div class="widget-card-icon">' + icon + '</div><div class="widget-card-label">' + label + '</div>';
+  return card;
+}
+
+// --- TODO WIDGET ---
+function getTodoItems(id) { return JSON.parse(localStorage.getItem('todo_' + id) || '[]'); }
+function saveTodoItems(id, items) { localStorage.setItem('todo_' + id, JSON.stringify(items)); }
+
+function buildTodoCard(w) {
+  const card = makeWidgetShell('&#9989;', escapeHtml(w.title || 'To-Do'));
+  card.innerHTML += '<button class="widget-remove-btn" onclick="removeWidget(\'' + w.id + '\')">\u2715</button>' +
+    '<div id="todo-list-' + w.id + '" class="wtodo-list"></div>' +
+    '<div class="wtodo-input-row"><input type="text" id="todo-input-' + w.id + '" placeholder="Add a task..." onkeydown="if(event.key===\'Enter\')todoAdd(\'' + w.id + '\')"><button onclick="todoAdd(\'' + w.id + '\')">+</button></div>';
+  setTimeout(function() { renderTodoList(w.id); }, 0);
+  return card;
+}
+function renderTodoList(id) {
+  const el = document.getElementById('todo-list-' + id);
+  if (!el) return;
+  const items = getTodoItems(id);
+  if (items.length === 0) { el.innerHTML = '<div style="font-size:11px;color:var(--text-dim)">No tasks yet.</div>'; return; }
+  el.innerHTML = items.map(function(t, i) {
+    return '<div class="wtodo-item' + (t.done ? ' done' : '') + '"><input type="checkbox" ' + (t.done ? 'checked' : '') + ' onchange="todoToggle(\'' + id + '\',' + i + ')"><span>' + escapeHtml(t.text) + '</span><button onclick="todoDelete(\'' + id + '\',' + i + ')">\u2715</button></div>';
+  }).join('');
+}
+function todoAdd(id) {
+  const input = document.getElementById('todo-input-' + id);
+  const val = input.value.trim();
+  if (!val) return;
+  const items = getTodoItems(id);
+  items.push({ text: val, done: false });
+  saveTodoItems(id, items);
+  input.value = '';
+  renderTodoList(id);
+}
+function todoToggle(id, i) {
+  const items = getTodoItems(id);
+  items[i].done = !items[i].done;
+  saveTodoItems(id, items);
+  renderTodoList(id);
+}
+function todoDelete(id, i) {
+  const items = getTodoItems(id);
+  items.splice(i, 1);
+  saveTodoItems(id, items);
+  renderTodoList(id);
+}
+
+// --- WEATHER WIDGET ---
+const WEATHER_ICONS = { 0: '\u2600\uFE0F', 1: '\u{1F324}\uFE0F', 2: '\u26C5', 3: '\u2601\uFE0F', 45: '\u{1F32B}\uFE0F', 48: '\u{1F32B}\uFE0F', 51: '\u{1F326}\uFE0F', 61: '\u{1F327}\uFE0F', 63: '\u{1F327}\uFE0F', 65: '\u{1F327}\uFE0F', 71: '\u{1F328}\uFE0F', 80: '\u{1F326}\uFE0F', 95: '\u26C8\uFE0F' };
+function weatherIcon(code) { return WEATHER_ICONS[code] || '\u{1F324}\uFE0F'; }
+
+function buildWeatherCard(w) {
+  const card = makeWidgetShell('&#127780;', escapeHtml(w.city));
+  card.innerHTML += '<button class="widget-remove-btn" onclick="removeWidget(\'' + w.id + '\')">\u2715</button>' +
+    '<div id="weather-body-' + w.id + '"><div class="widget-card-sub">Loading...</div></div>' +
+    '<button class="wweather-refresh" onclick="fetchWeatherFor(\'' + w.id + '\',\'' + escapeHtml(w.city).replace(/'/g, "\\'") + '\')">Refresh</button>';
+  setTimeout(function() { fetchWeatherFor(w.id, w.city); }, 0);
+  return card;
+}
+async function fetchWeatherFor(id, city) {
+  const body = document.getElementById('weather-body-' + id);
+  if (!body) return;
+  body.innerHTML = '<div class="widget-card-sub">Loading...</div>';
+  try {
+    const geoRes = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&name=' + encodeURIComponent(city));
+    const geo = await geoRes.json();
+    if (!geo.results || !geo.results.length) throw new Error('City not found');
+    const loc = geo.results[0];
+    const wRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude + '&current_weather=true');
+    const wData = await wRes.json();
+    const cw = wData.current_weather;
+    body.innerHTML = '<div class="wweather-temp">' + weatherIcon(cw.weathercode) + ' ' + Math.round(cw.temperature) + '\u00B0C</div>' +
+      '<div class="wweather-loc">' + escapeHtml(loc.name) + (loc.country ? ', ' + escapeHtml(loc.country) : '') + ' \u00B7 wind ' + Math.round(cw.windspeed) + ' km/h</div>';
+  } catch (e) {
+    body.innerHTML = '<div class="widget-card-sub">Couldn\'t load weather. Check the city name or your connection, then tap refresh.</div>';
+  }
+}
+
+// --- STOCKS WIDGET (India) ---
+function buildStocksCard(w) {
+  const card = makeWidgetShell('&#128200;', 'Stocks (India)');
+  card.innerHTML += '<button class="widget-remove-btn" onclick="removeWidget(\'' + w.id + '\')">\u2715</button>' +
+    '<div id="stocks-body-' + w.id + '"><div class="widget-card-sub">Loading...</div></div>' +
+    '<button class="wweather-refresh" onclick="fetchStocksFor(\'' + w.id + '\')">Refresh</button>';
+  setTimeout(function() { fetchStocksFor(w.id); }, 0);
+  return card;
+}
+async function fetchStocksFor(id) {
+  const body = document.getElementById('stocks-body-' + id);
+  const w = getActiveWidgets().find(function(x) { return x.id === id; });
+  if (!body || !w) return;
+  body.innerHTML = '<div class="widget-card-sub">Loading...</div>';
+  try {
+    const rows = await Promise.all(w.symbols.map(async function(sym) {
+      const res = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym));
+      const data = await res.json();
+      const result = data.chart && data.chart.result && data.chart.result[0];
+      if (!result) throw new Error('no data');
+      const price = result.meta.regularMarketPrice;
+      const prevClose = result.meta.chartPreviousClose || result.meta.previousClose;
+      const change = prevClose ? (((price - prevClose) / prevClose) * 100) : 0;
+      return { sym: sym, price: price, change: change };
+    }));
+    body.innerHTML = rows.map(function(r) {
+      const cls = r.change >= 0 ? 'up' : 'down';
+      const arrow = r.change >= 0 ? '\u25B2' : '\u25BC';
+      return '<div class="wstock-row"><span>' + escapeHtml(r.sym) + '</span><b>' + r.price.toFixed(2) + ' <span class="' + cls + '">' + arrow + ' ' + Math.abs(r.change).toFixed(2) + '%</span></b></div>';
+    }).join('');
+  } catch (e) {
+    body.innerHTML = '<div class="widget-card-sub">Live data unavailable right now (network or symbol issue). Tap refresh to retry.</div>';
+  }
+}
+
+// --- GLOBAL TIME WIDGET ---
+function buildWorldClockCard(w) {
+  const card = makeWidgetShell('&#127760;', 'Global Time');
+  card.innerHTML += '<button class="widget-remove-btn" onclick="removeWidget(\'' + w.id + '\')">\u2715</button>' +
+    '<div id="worldclock-body-' + w.id + '"></div>';
+  updateWorldClockCard(w.id);
+  return card;
+}
+function updateWorldClockCard(id) {
+  const w = getActiveWidgets().find(function(x) { return x.id === id; });
+  const body = document.getElementById('worldclock-body-' + id);
+  if (!w || !body) return;
+  body.innerHTML = w.zones.map(function(zoneKey) {
+    const preset = TIMEZONE_PRESETS.find(function(z) { return z.key === zoneKey; });
+    const label = preset ? preset.label : zoneKey;
+    let timeStr = '--:--';
+    try {
+      timeStr = new Intl.DateTimeFormat('en-US', { timeZone: zoneKey, hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date());
+    } catch (e) {}
+    return '<div class="wclock-row"><span>' + escapeHtml(label) + '</span><b>' + timeStr + '</b></div>';
+  }).join('');
+}
+function updateAllWorldClocks() {
+  getActiveWidgets().filter(function(w) { return w.type === 'worldclock'; }).forEach(function(w) { updateWorldClockCard(w.id); });
+}
+
+// --- FOCUS TIMER WIDGET ---
+const timerStates = {}; // id -> { remaining (sec), running, interval }
+
+function buildTimerCard(w) {
+  const card = makeWidgetShell('&#9201;', 'Focus Timer');
+  if (!timerStates[w.id]) timerStates[w.id] = { remaining: 10 * 60, running: false, interval: null, preset: 10 };
+  card.innerHTML += '<button class="widget-remove-btn" onclick="removeWidget(\'' + w.id + '\')">\u2715</button>' +
+    '<div class="wtimer-presets">' +
+      '<button onclick="timerSetPreset(\'' + w.id + '\',10)" id="tpreset-' + w.id + '-10">10 min</button>' +
+      '<button onclick="timerSetPreset(\'' + w.id + '\',45)" id="tpreset-' + w.id + '-45">45 min</button>' +
+      '<button onclick="timerSetPreset(\'' + w.id + '\',0)" id="tpreset-' + w.id + '-0">Reset (0)</button>' +
+    '</div>' +
+    '<div class="wtimer-display" id="timer-display-' + w.id + '">10:00</div>' +
+    '<div class="wtimer-controls">' +
+      '<button onclick="timerStart(\'' + w.id + '\')">Start</button>' +
+      '<button onclick="timerPause(\'' + w.id + '\')">Pause</button>' +
+      '<button onclick="timerReset(\'' + w.id + '\')">Reset</button>' +
+    '</div>';
+  setTimeout(function() { timerRenderDisplay(w.id); }, 0);
+  return card;
+}
+function timerRenderDisplay(id) {
+  const st = timerStates[id];
+  const el = document.getElementById('timer-display-' + id);
+  if (!st || !el) return;
+  const m = Math.floor(st.remaining / 60), s = st.remaining % 60;
+  el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  document.querySelectorAll('#tpreset-' + id + '-10,#tpreset-' + id + '-45,#tpreset-' + id + '-0').forEach(function(b) { b.classList.remove('active'); });
+  const activeBtn = document.getElementById('tpreset-' + id + '-' + st.preset);
+  if (activeBtn) activeBtn.classList.add('active');
+}
+function timerSetPreset(id, minutes) {
+  const st = timerStates[id];
+  if (!st) return;
+  clearInterval(st.interval);
+  st.running = false;
+  st.preset = minutes;
+  st.remaining = minutes * 60;
+  timerRenderDisplay(id);
+}
+function timerStart(id) {
+  const st = timerStates[id];
+  if (!st || st.running || st.remaining <= 0) return;
+  st.running = true;
+  st.interval = setInterval(function() {
+    st.remaining--;
+    timerRenderDisplay(id);
+    if (st.remaining <= 0) {
+      clearInterval(st.interval);
+      st.running = false;
+      timerRemind(id);
+    }
+  }, 1000);
+}
+function timerPause(id) {
+  const st = timerStates[id];
+  if (!st) return;
+  clearInterval(st.interval);
+  st.running = false;
+}
+function timerReset(id) {
+  const st = timerStates[id];
+  if (!st) return;
+  clearInterval(st.interval);
+  st.running = false;
+  st.remaining = st.preset * 60;
+  timerRenderDisplay(id);
+}
+function timerRemind(id) {
+  showToast('Focus timer done \u2014 take a break!');
+  try {
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification('Focus timer complete', { body: 'Time\u2019s up. Take a short break.' });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
+    }
+    if ('speechSynthesis' in window && localStorage.getItem('speech_enabled') !== 'false') {
+      const u = new SpeechSynthesisUtterance('Focus timer complete. Time to take a break.');
+      const voices = speechSynthesis.getVoices();
+      if (voices.length) u.voice = pickFemaleVoice(voices);
+      speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+}
+
+function escapeHtml(str) {
+  return String(str == null ? '' : str).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+
+// SPEECH (reliable on-load voice, forced female, announces current time)
+let speechHasSpoken = false;
+
+function pickFemaleVoice(voices) {
+  const femaleHints = ['female', 'zira', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'susan', 'google us english', 'google uk english female', 'hazel', 'aria', 'jenny'];
+  let v = voices.find(v => femaleHints.some(h => v.name.toLowerCase().includes(h)));
+  if (!v) v = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+  return v || voices[0];
+}
+
+function buildWelcomeMessage() {
+  const name = localStorage.getItem('user_name') || 'User';
+  const projects = getProjects();
+  const activeCount = projects.filter(p => p.status === 'active').length;
+  let msg = `${getGreetingPhrase()}, ${name}. `;
+  if (projects.length === 0) msg += 'No active projects. Ready to begin. ';
+  else msg += `You have ${activeCount} active project${activeCount !== 1 ? 's' : ''}. It's good to continue. `;
+  msg += `The time is now ${getTimeString()}.`;
+  return msg;
+}
+
+function speakWelcome() {
+  if (speechHasSpoken) return;
+  if (!('speechSynthesis' in window)) return;
+  if (localStorage.getItem('speech_enabled') === 'false') return;
   const voices = speechSynthesis.getVoices();
-  const mv = voices.find(v => v.name.includes('Male') || v.name.includes('Google US English'));
-  if (mv) utter.voice = mv;
-  if (localStorage.getItem('speech_enabled') !== 'false') speechSynthesis.speak(utter);
+  if (!voices || voices.length === 0) return; // wait for voices to load, retried elsewhere
+
+  speechHasSpoken = true;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  const utter = new SpeechSynthesisUtterance(buildWelcomeMessage());
+  utter.rate = 0.95; utter.pitch = 1.05; utter.volume = 0.85;
+  utter.voice = pickFemaleVoice(voices);
+  utter.onerror = function() { speechHasSpoken = false; };
+  speechSynthesis.speak(utter);
+}
+
+function initSpeech() {
+  if (!('speechSynthesis' in window)) return;
+
+  // Warm up voice list (some browsers populate it async)
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = speakWelcome;
+
+  // Try immediately in case voices are already loaded
+  speakWelcome();
+
+  // Fallback poll: some browsers never fire onvoiceschanged reliably
+  let tries = 0;
+  const poll = setInterval(function() {
+    tries++;
+    if (speechHasSpoken || tries > 25) { clearInterval(poll); return; }
+    speakWelcome();
+  }, 300);
+
+  // Fallback for browsers that block audio until a user gesture
+  const gestureHandler = function() {
+    if (!speechHasSpoken) speakWelcome();
+    document.removeEventListener('click', gestureHandler);
+    document.removeEventListener('keydown', gestureHandler);
+  };
+  document.addEventListener('click', gestureHandler, { once: true });
+  document.addEventListener('keydown', gestureHandler, { once: true });
 }
 
 // SEARCH
@@ -1122,8 +1884,7 @@ function getFavicon(url) {
 }
 
 let currentCat = localStorage.getItem('ql_current_cat') || 'Home';
-let currentQLPage = 0;
-const QL_PER_PAGE = 12;
+const QL_MAX_VISIBLE = 24; // grid can comfortably show 24+ links before scrolling
 
 function getCatBookmarks(cat) {
   return getBookmarks().filter(b => (b.category || 'Home') === cat);
@@ -1163,75 +1924,92 @@ function deleteCategory(cat) {
 }
 
 function toggleCatMenu() {
-  document.getElementById('cat-menu').classList.toggle('show');
+  const open = document.getElementById('cat-menu').classList.toggle('show');
+  document.getElementById('cat-dropdown').classList.toggle('show-menu', open);
 }
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('#cat-dropdown')) document.getElementById('cat-menu').classList.remove('show');
+  if (!e.target.closest('#cat-dropdown')) {
+    document.getElementById('cat-menu').classList.remove('show');
+    document.getElementById('cat-dropdown').classList.remove('show-menu');
+  }
 });
 
 function renderQL() {
   const track = document.getElementById('ql-track');
-  const dots = document.getElementById('ql-dots');
-  const bms = getCatBookmarks(currentCat);
-  const pages = [];
-  for (let i = 0; i < bms.length; i += QL_PER_PAGE) pages.push(bms.slice(i, i + QL_PER_PAGE));
-  if (pages.length === 0) pages.push([]);
+  const allBookmarks = getBookmarks();
+  const bms = allBookmarks.filter(function(b) { return (b.category || 'Home') === currentCat; });
 
   track.innerHTML = '';
-  dots.innerHTML = '';
 
-  pages.forEach(function(page, pi) {
-    const section = document.createElement('div');
-    section.className = 'ql-section';
+  const section = document.createElement('div');
+  section.className = 'ql-section';
 
-    const grid = document.createElement('div');
-    grid.className = 'ql-grid';
+  const grid = document.createElement('div');
+  grid.className = 'ql-grid';
 
-    page.forEach(function(bm, i) {
-      const globalIdx = getBookmarks().indexOf(bm);
-      const card = document.createElement('a');
-      card.className = 'ql-card';
-      card.href = bm.url.startsWith('http') ? bm.url : 'https://'+bm.url;
-      card.target = '_blank';
-      card.rel = 'noopener';
-      const fav = getFavicon(bm.url);
-      const initial = bm.name.charAt(0).toUpperCase();
-      card.innerHTML = '<button class="ql-del" onclick="event.preventDefault();deleteBookmark(' + globalIdx + ')">\u2715</button>' +
-        (fav ? '<img src="' + fav + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' : '') +
-        '<div style="width:26px;height:26px;background:var(--glass-bg);border-radius:6px;display:' + (fav?'none':'flex') + ';align-items:center;justify-content:center;font-size:11px;font-weight:600">' + initial + '</div>' +
-        '<div class="ql-name">' + bm.name + '</div>';
-      grid.appendChild(card);
-    });
-
-    const addCard = document.createElement('div');
-    addCard.className = 'ql-card ql-add';
-    addCard.innerHTML = '<div style="font-size:22px;margin-top:4px">+</div>';
-    addCard.onclick = function() { openModal('bm'); };
-    grid.appendChild(addCard);
-
-    section.appendChild(grid);
-    track.appendChild(section);
-
-    const dot = document.createElement('div');
-    dot.className = 'ql-dot' + (pi === 0 ? ' active' : '');
-    dot.onclick = function() { goToQLPage(pi); };
-    dots.appendChild(dot);
+  bms.forEach(function(bm) {
+    const globalIdx = allBookmarks.indexOf(bm);
+    const card = document.createElement('a');
+    card.className = 'ql-card';
+    card.href = bm.url.startsWith('http') ? bm.url : 'https://'+bm.url;
+    card.target = '_blank';
+    card.rel = 'noopener';
+    const fav = getFavicon(bm.url);
+    const initial = bm.name.charAt(0).toUpperCase();
+    card.innerHTML = '<button class="ql-del" onclick="event.preventDefault();deleteBookmark(' + globalIdx + ')">\u2715</button>' +
+      (fav ? '<img src="' + fav + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' : '') +
+      '<div style="width:26px;height:26px;background:var(--glass-bg);border-radius:6px;display:' + (fav?'none':'flex') + ';align-items:center;justify-content:center;font-size:11px;font-weight:600">' + initial + '</div>' +
+      '<div class="ql-name">' + bm.name + '</div>';
+    grid.appendChild(card);
   });
 
-  goToQLPage(0);
+  const addCard = document.createElement('div');
+  addCard.className = 'ql-card ql-add';
+  addCard.innerHTML = '<div style="font-size:22px;margin-top:4px">+</div>';
+  addCard.onclick = function() { openModal('bm'); };
+  grid.appendChild(addCard);
+
+  section.appendChild(grid);
+  track.appendChild(section);
 }
 
-function goToQLPage(idx) {
-  const pages = document.querySelectorAll('.ql-section');
-  if (idx < 0) idx = pages.length - 1;
-  if (idx >= pages.length) idx = 0;
-  currentQLPage = idx;
-  document.getElementById('ql-track').style.transform = 'translateX(-' + (idx * 100) + '%)';
-  document.querySelectorAll('.ql-dot').forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+// LEFT/RIGHT ARROWS NOW SWITCH CATEGORY (not paginate within a category)
+function prevCategory() {
+  const cats = getCategories();
+  if (cats.length < 2) return;
+  let idx = cats.indexOf(currentCat);
+  idx = (idx - 1 + cats.length) % cats.length;
+  currentCat = cats[idx];
+  localStorage.setItem('ql_current_cat', currentCat);
+  renderCatMenu(); renderQL();
+}
+function nextCategory() {
+  const cats = getCategories();
+  if (cats.length < 2) return;
+  let idx = cats.indexOf(currentCat);
+  idx = (idx + 1) % cats.length;
+  currentCat = cats[idx];
+  localStorage.setItem('ql_current_cat', currentCat);
+  renderCatMenu(); renderQL();
 }
 
-function prevQL() { goToQLPage(currentQLPage - 1); }
-function nextQL() { goToQLPage(currentQLPage + 1); }
+// QUICKLINKS: two states only - "stay" (in flow) or "hide" (floats to a bare expand tab)
+function toggleQLVisibility() {
+  const wrap = document.getElementById('ql-wrap');
+  const btn = document.getElementById('ql-toggle-btn');
+  const hidden = wrap.classList.toggle('hidden-floated');
+  btn.innerHTML = hidden ? '&#9662;' : '&#9652;';
+  btn.title = hidden ? 'Show quicklinks' : 'Hide quicklinks';
+  localStorage.setItem('ql_hidden', hidden ? 'true' : 'false');
+}
+function initQLVisibility() {
+  const wrap = document.getElementById('ql-wrap');
+  const btn = document.getElementById('ql-toggle-btn');
+  const hidden = localStorage.getItem('ql_hidden') === 'true';
+  wrap.classList.toggle('hidden-floated', hidden);
+  btn.innerHTML = hidden ? '&#9662;' : '&#9652;';
+  btn.title = hidden ? 'Show quicklinks' : 'Hide quicklinks';
+}
 
 function saveBookmark() {
   const name = document.getElementById('bm-name-input').value.trim();
@@ -1698,22 +2476,21 @@ function showToast(msg) {
 
 // INIT
 window.onload = function() {
-  updateGreeting();
   initSEToggle();
   initCopyboard();
   renderCatMenu();
   renderQL();
+  initQLVisibility();
   renderProjects();
+  updateGreeting();
+  renderActiveWidgets();
   document.getElementById('name-input').value = localStorage.getItem('user_name') || '';
   bgStyle = localStorage.getItem('bg_style') || 'aurora';
 
-  setTimeout(function() {
-    if (speechSynthesis.getVoices().length > 0) {
-      speakWelcome();
-    } else {
-      speechSynthesis.onvoiceschanged = speakWelcome;
-    }
-  }, 800);
+  initSpeech();
+
+  // Keep the widget's greeting/time text and voice announcement fresh
+  setInterval(updateGreeting, 60000);
 
   console.log('%c\u{1F510} Vault: type "vault" anywhere to open secret console', 'color:#3b82f6;font-size:14px');
   console.log('%c\u{1F4E6} Export: type "export" anywhere to download backup', 'color:#a78bfa;font-size:14px');
