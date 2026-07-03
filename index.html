@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevDash — The Developer & Professional Start Page</title>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5LZ8WB61EQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5LZ8WB61EQ');
+</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -589,6 +598,24 @@
             text-align: center;
         }
 
+        .video-wrapper {
+            margin-top: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-wrapper iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 0;
+            border-radius: 14px;
+            display: block;
+        }
+
         .install-steps {
             display: flex;
             flex-direction: column;
@@ -836,6 +863,8 @@
                 <span>◉</span> View on GitHub
             </a>
         </div>
+        <div>
+        </div>
 
         <div class="preview-mockup">
             <div class="mockup-frame">
@@ -1022,6 +1051,15 @@
         <div class="section-header fade-in">
             <h2>Set as Your Start Page</h2>
             <p>Configure your browser to open Startpage on every new tab and startup. It's simple and takes under a minute.</p>
+        </div>
+        <div class="video-wrapper fade-in">
+            <iframe
+                src="https://www.youtube.com/embed/z-yERJi4R10?si=HD7RxSVkRtgHohKW"
+                title="Setup Configuration Guide"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
         </div>
         <div class="install-steps fade-in">
             <div class="step">
