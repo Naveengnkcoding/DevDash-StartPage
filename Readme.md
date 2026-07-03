@@ -51,46 +51,46 @@ We believe great tools should be free, open, and shaped by the community. **Cont
 
 🔗 **[Download DevDash Alpha 2 (HTML)](https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/DevDash-v2.html)**
 
-<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha2/DevDash.html" download>
-  ⬇️ Download Alpha 2
+
+### 🚀 Release Beta
+
+*   **Added:** JARVIS with Voice — Project Management and Multi-Section bookmarks + updated UI
+<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/DevDash-v2.html" download>
+  ⬇️ Download Beta V1
 </a>
+---
+
+---
+*   🔗 **[Download Alpha 2 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/main/download/alpha/StartPage_v2.html)**
+
+<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/StartPage_v2.html" download>
+  ⬇️ Download alpha v2
+</a>
+
+
+![DevDash Alpha v2 Preview](./image/v2.png)
 
 ---
 
-### 🚀 Release Version 3
-
-*   **Added:** JARVIS with Voice — Project Management and Multi-Section bookmarks + updated UI.
-*   🔗 **[Download DevDash v3.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/main/download/startpage_v3.html)**
-
-<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/beta/startpage_v2.html" download>
-  ⬇️ Download Beta v1
-</a>
-
-### 🌟 Version 3 Preview
-
-![DevDash v3 Preview](./image/v3.png)
-
----
-
-### 🚀 Release Version 2
+<!-- ### 🚀 Release Version 1
 
 *   **Added:** Cloud image wallpapers with 6 categories — (Nature / City / Ocean / Space / Abstract / Mountain) + updated UI.
-*   🔗 **[Download DevDash v2.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/main/download/v1.1.0/StartPage.html)**
+*   🔗 **[Download DevDash v2.0.0 (HTML)](https://github.com/Naveengnkcoding/Browser-StartPage/blob/main/download/alpha/StartPage-v2.html)**
 
-<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/startpage-1.html" download>
-  ⬇️ Download v2
+<a href="https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/StartPage-v2.html" download>
+  ⬇️ Download Alpha 2
 </a>
 
 ### 🌟 Version 2 Preview
 
 ![DevDash v2 Preview](./image/v2.png)
 
----
+--- -->
 
 ### 📁 Release Version 1 (Initial Release)
 
 *   **Features:** Multi search engine | Quick bookmarks | JSON backup | Multi-slot clipboard | HTML-CSS wallpaper | Dark theme.
-*   🔗 **[Download DevDash v1.0.0 (HTML)](https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/v1.0.0/startpage.html)**
+*   🔗 **[Download DevDash v1.0.0 (HTML)](https://github.com/Naveengnkcoding/DevDash-StartPage/blob/main/download/alpha/startpage-1.html)**
 
 ### 🌟 Version 1 Preview
 
